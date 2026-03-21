@@ -4,8 +4,20 @@ import { getAllEmployees } from '../services/employeeService';
 import { getAllDepartments } from '../services/departmentService';
 import { Chart, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { Card, CardContent, Grid, Typography, Box, CircularProgress } from '@mui/material';
+import { keyframes } from '@mui/material/styles';
 
 Chart.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, ArcElement);
+
+const dropDown = keyframes`
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
 
 const Dashboard = () => {
   const [employeeCount, setEmployeeCount] = useState(0);
@@ -63,12 +75,7 @@ const Dashboard = () => {
   }, []);
 
   const animationStyle = {
-    animation: 'dropDown 0.8s ease forwards',
-    opacity: 0,
-    '@keyframes dropDown': {
-      '0%': { transform: 'translateY(-20px)', opacity: 0 },
-      '100%': { transform: 'translateY(0)', opacity: 1 },
-    },
+    animation: `${dropDown} 0.8s ease forwards`,
   };
 
   const totalOverviewData = {

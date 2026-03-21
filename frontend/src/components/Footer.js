@@ -1,95 +1,95 @@
 import React from 'react';
-import { Box, Container, Grid, Typography, Link } from '@mui/material';
+import { Box, Container, Grid, Typography, Link, Stack, Chip } from '@mui/material';
 
 const Footer = () => {
   return (
     <Box
       component="footer"
       sx={{
-        backgroundColor: '#3f51b5',
+        background: 'linear-gradient(135deg, #243385 0%, #1a245f 100%)',
         color: 'white',
-        padding: '2rem 0',
-        marginTop: '2rem',
-        boxShadow: 3,
+        py: 5,
+        mt: 6,
       }}
     >
       <Container maxWidth="lg">
-        <Grid container spacing={4}>
-          {/* About Section */}
+        <Grid container spacing={4} alignItems="flex-start">
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" sx={{ fontWeight: 600, marginBottom: '1rem' }}>
-              About Us
+            <Typography variant="h6" sx={{ fontWeight: 800, mb: 1 }}>
+              Employee Management
             </Typography>
-            <Typography variant="body2">
-              We provide a comprehensive Employee Management System that helps you manage your employees and departments with ease. Our mission is to make HR
-              processes seamless and efficient.
+            <Typography variant="body2" sx={{ opacity: 0.9, mb: 2 }}>
+              Dashboards, departments, and employee operations in one place for fast decisions and clean reporting.
             </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Chip label="Export-ready data" size="small" sx={{ bgcolor: 'rgba(255,255,255,0.14)', color: 'white' }} />
+              <Chip label="Role-based access" size="small" sx={{ bgcolor: 'rgba(255,255,255,0.14)', color: 'white' }} />
+              <Chip label="Insightful dashboards" size="small" sx={{ bgcolor: 'rgba(255,255,255,0.14)', color: 'white' }} />
+            </Stack>
           </Grid>
 
-          {/* Quick Links Section */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" sx={{ fontWeight: 600, marginBottom: '1rem' }}>
+            <Typography variant="h6" sx={{ fontWeight: 800, mb: 1 }}>
               Quick Links
             </Typography>
             <Box>
-              <Link href="/" color="inherit" underline="none" sx={{ display: 'block', marginBottom: '0.5rem', '&:hover': { color: '#f57c00' } }}>
+              <Link href="/" color="inherit" underline="none" sx={{ display: 'block', mb: 0.8, opacity: 0.95, '&:hover': { color: '#ffd180' } }}>
                 Home
               </Link>
-              <Link href="/dashboard" color="inherit" underline="none" sx={{ display: 'block', marginBottom: '0.5rem', '&:hover': { color: '#f57c00' } }}>
+              <Link href="/dashboard" color="inherit" underline="none" sx={{ display: 'block', mb: 0.8, opacity: 0.95, '&:hover': { color: '#ffd180' } }}>
                 Dashboard
               </Link>
-              <Link href="/employees" color="inherit" underline="none" sx={{ display: 'block', marginBottom: '0.5rem', '&:hover': { color: '#f57c00' } }}>
+              <Link href="/employees" color="inherit" underline="none" sx={{ display: 'block', mb: 0.8, opacity: 0.95, '&:hover': { color: '#ffd180' } }}>
                 Employees
               </Link>
-              <Link href="/departments" color="inherit" underline="none" sx={{ display: 'block', marginBottom: '0.5rem', '&:hover': { color: '#f57c00' } }}>
+              <Link href="/departments" color="inherit" underline="none" sx={{ display: 'block', mb: 0.8, opacity: 0.95, '&:hover': { color: '#ffd180' } }}>
                 Departments
               </Link>
-              <Link href="/profile" color="inherit" underline="none" sx={{ display: 'block', marginBottom: '0.5rem', '&:hover': { color: '#f57c00' } }}>
+              <Link href="/profile" color="inherit" underline="none" sx={{ display: 'block', mb: 0.8, opacity: 0.95, '&:hover': { color: '#ffd180' } }}>
                 Profile
               </Link>
-              <Link href="/login" color="inherit" underline="none" sx={{ display: 'block', marginBottom: '0.5rem', '&:hover': { color: '#f57c00' } }}>
+              <Link href="/login" color="inherit" underline="none" sx={{ display: 'block', mb: 0.8, opacity: 0.95, '&:hover': { color: '#ffd180' } }}>
                 Login
               </Link>
-              <Link href="/register" color="inherit" underline="none" sx={{ display: 'block', '&:hover': { color: '#f57c00' } }}>
+              <Link href="/register" color="inherit" underline="none" sx={{ display: 'block', opacity: 0.95, '&:hover': { color: '#ffd180' } }}>
                 Register
               </Link>
             </Box>
           </Grid>
 
-          {/* Contact Information Section */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" sx={{ fontWeight: 600, marginBottom: '1rem' }}>
-              Contact Us
+            <Typography variant="h6" sx={{ fontWeight: 800, mb: 1 }}>
+              Contact
             </Typography>
-            <Typography variant="body2">
-              Project Maintainer:{' '}
-              <Link href="https://github.com/hoangsonww" color="inherit" sx={{ textDecoration: 'underline', '&:hover': { color: '#f57c00' } }}>
+            <Typography variant="body2" sx={{ opacity: 0.9, mb: 0.8 }}>
+              Maintainer:{' '}
+              <Link href="https://github.com/hoangsonww" color="inherit" sx={{ textDecoration: 'underline', '&:hover': { color: '#ffd180' } }}>
                 Son Nguyen
               </Link>
             </Typography>
-            <Typography variant="body2">
+            <Typography variant="body2" sx={{ opacity: 0.9, mb: 0.8 }}>
               Email:{' '}
-              <Link href="mailto:hoangson091104@gmail.com" color="inherit" sx={{ textDecoration: 'underline', '&:hover': { color: '#f57c00' } }}>
+              <Link href="mailto:hoangson091104@gmail.com" color="inherit" sx={{ textDecoration: 'underline', '&:hover': { color: '#ffd180' } }}>
                 hoangson091104@gmail.com
               </Link>
             </Typography>
-            <Typography variant="body2">Phone: +1 (123) 456-7890</Typography>
-            <Typography variant="body2" sx={{ marginTop: '0.5rem' }}>
-              Address: 123 Employee St, Suite 100, New York, NY 10001
+            <Typography variant="body2" sx={{ opacity: 0.9 }}>
+              Weekly pulse, exports, and dashboard insights ready for teams and leadership.
             </Typography>
           </Grid>
         </Grid>
 
-        {/* Bottom Section */}
         <Box
           sx={{
             textAlign: 'center',
-            borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-            marginTop: '2rem',
-            paddingTop: '1rem',
+            borderTop: '1px solid rgba(255, 255, 255, 0.22)',
+            mt: 3,
+            pt: 2,
           }}
         >
-          <Typography variant="body2">© {new Date().getFullYear()} Employee Management System. All rights reserved.</Typography>
+          <Typography variant="body2" sx={{ opacity: 0.9 }}>
+            © {new Date().getFullYear()} Employee Management System. All rights reserved.
+          </Typography>
         </Box>
       </Container>
     </Box>
