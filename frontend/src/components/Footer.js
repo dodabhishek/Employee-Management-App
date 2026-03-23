@@ -1,6 +1,10 @@
 import React from 'react';
 import { Box, Container, Grid, Typography, Link, Stack, Chip } from '@mui/material';
 
+const CONTACT_NAME = process.env.REACT_APP_CONTACT_NAME || '';
+const CONTACT_GITHUB_URL = process.env.REACT_APP_CONTACT_GITHUB_URL || '';
+const CONTACT_EMAIL = process.env.REACT_APP_CONTACT_EMAIL || '';
+
 const Footer = () => {
   return (
     <Box
@@ -63,15 +67,31 @@ const Footer = () => {
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.9, mb: 0.8 }}>
               Maintainer:{' '}
-              <Link href="https://github.com/hoangsonww" color="inherit" sx={{ textDecoration: 'underline', '&:hover': { color: '#ffd180' } }}>
-                Son Nguyen
-              </Link>
+              {CONTACT_GITHUB_URL ? (
+                <Link
+                  href={CONTACT_GITHUB_URL}
+                  color="inherit"
+                  sx={{ textDecoration: 'underline', '&:hover': { color: '#ffd180' } }}
+                >
+                  {CONTACT_NAME || 'GitHub'}
+                </Link>
+              ) : (
+                <span>{CONTACT_NAME || '-'}</span>
+              )}
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.9, mb: 0.8 }}>
               Email:{' '}
-              <Link href="mailto:hoangson091104@gmail.com" color="inherit" sx={{ textDecoration: 'underline', '&:hover': { color: '#ffd180' } }}>
-                hoangson091104@gmail.com
-              </Link>
+              {CONTACT_EMAIL ? (
+                <Link
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  color="inherit"
+                  sx={{ textDecoration: 'underline', '&:hover': { color: '#ffd180' } }}
+                >
+                  {CONTACT_EMAIL}
+                </Link>
+              ) : (
+                <span>-</span>
+              )}
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.9 }}>
               Weekly pulse, exports, and dashboard insights ready for teams and leadership.
