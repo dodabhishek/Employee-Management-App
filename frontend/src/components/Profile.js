@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Button, CircularProgress, Snackbar, Alert } from '@mui/material';
+import { Box, Typography, Button, CircularProgress, Snackbar, Alert, Container, Avatar, Grid, Card, CardContent, Divider, Stack, useTheme, alpha } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { getAllEmployees } from '../services/employeeService';
 import { getAllDepartments } from '../services/departmentService';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import GroupsIcon from '@mui/icons-material/Groups';
+import BusinessIcon from '@mui/icons-material/Business';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-const Profile = ({ theme }) => {
+const Profile = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [employeeCount, setEmployeeCount] = useState(0);
   const [departmentCount, setDepartmentCount] = useState(0);
@@ -14,16 +20,12 @@ const Profile = ({ theme }) => {
   const [showSnackbar, setShowSnackbar] = useState(false);
 
   useEffect(() => {
-    const checkLoginStatus = () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        setIsLoggedIn(true);
-      } else {
-        setShowSnackbar(true); // Show the snackbar notification
-      }
-    };
-
-    checkLoginStatus();
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
+      setShowSnackbar(true);
+    }
   }, [navigate]);
 
   useEffect(() => {
@@ -44,152 +46,135 @@ const Profile = ({ theme }) => {
       setLoading(false);
     };
 
-    fetchData();
-  }, []);
-
-  const handleCloseSnackbar = () => {
-    setShowSnackbar(false);
-    navigate('/login', { replace: true });
-  };
-
-  const handleLoginRedirect = () => {
-    navigate('/login');
-  };
-
-  if (!isLoggedIn) {
-    return (
-      <>
-        <Snackbar open={showSnackbar} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} sx={{ mt: 9 }}>
-          <Alert onClose={handleCloseSnackbar} severity="warning" sx={{ width: '100%' }}>
-            You must be logged in to view your profile.{' '}
-            <span
-              onClick={handleLoginRedirect}
-              style={{
-                color: '#3f51b5',
-                textDecoration: 'underline',
-                cursor: 'pointer',
-                transition: 'color 0.1s',
-              }}
-              onMouseEnter={e => (e.target.style.color = '#f57c00')}
-              onMouseLeave={e => (e.target.style.color = '#3f51b5')}
-            >
-              Login
-            </span>
-          </Alert>
-        </Snackbar>
-        <div style={{ height: 20 }}></div>
-      </>
-    );
-  }
-
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          backgroundColor: theme === 'dark' ? '#222' : '#f4f4f4',
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  const profileData = {
-    username: localStorage.getItem('EMSusername') || 'John Doe',
-    employeeCount,
-    departmentCount,
-    averageAge,
-    averageJobSatisfaction: 'High',
-  };
-
-  const avatarUrl = '/OIP.jpg';
+    if (isLoggedIn) fetchData();
+  }, [isLoggedIn]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
 
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: theme === 'dark' ? '#222' : '#f4f4f4',
-        paddingTop: 8,
-        paddingBottom: 20,
-        transition: 'background-color 0.3s ease',
-      }}
-    >
-      <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: 4 }}>
-        Welcome, {profileData.username}!
-      </Typography>
+  if (loading) {
+    return (
+      <Box sx={{ minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <CircularProgress thickness={5} sx={{ color: 'primary.main' }} />
+      </Box>
+    );
+  }
 
-      <Box
-        sx={{
-          backgroundColor: theme === 'dark' ? '#333' : '#fff',
-          color: theme === 'dark' ? '#fff' : '#000',
-          padding: 4,
-          borderRadius: 2,
-          width: '400px',
-          textAlign: 'center',
-          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-          transition: 'background-color 0.3s ease',
-        }}
-      >
-        <Box
-          sx={{
-            width: 150,
-            height: 150,
-            borderRadius: '50%',
-            overflow: 'hidden',
-            margin: '0 auto 16px',
-            border: '3px solid #3f51b5',
+  const username = localStorage.getItem('EMSusername') || 'Administrator';
+  const isDark = theme.palette.mode === 'dark';
+
+  return (
+    <Container maxWidth="md" sx={{ mt: 14, mb: 10 }}>
+      <Snackbar open={showSnackbar} onClose={() => navigate('/login')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert severity="warning" variant="filled" sx={{ bgcolor: 'background.paper' }}>Access Denied. Please authenticate.</Alert>
+      </Snackbar>
+
+      <Box sx={{ textAlign: 'center', mb: 8 }}>
+        <Avatar 
+          sx={{ 
+            width: 140, height: 140, mx: 'auto', mb: 4, 
+            bgcolor: 'primary.main', fontSize: '3.5rem', fontWeight: 900,
+            boxShadow: `0 0 50px ${alpha(theme.palette.primary.main, 0.4)}`,
+            border: `6px solid ${alpha(theme.palette.background.paper, 0.8)}`,
+            color: 'white'
           }}
         >
-          <img src={avatarUrl} alt="User Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        </Box>
-
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-          Profile Information
+          {username[0].toUpperCase()}
+        </Avatar>
+        <Typography variant="h3" className="gradient-text" sx={{ fontWeight: 900, mb: 1, letterSpacing: '-0.03em' }}>
+          Personnel Profile
         </Typography>
-
-        <Typography variant="body1" sx={{ mb: 1, fontSize: '16px' }}>
-          <strong>Username:</strong> {profileData.username}
+        <Typography sx={{ color: 'text.secondary', fontSize: '1.25rem', fontWeight: 500 }}>
+          Identity: <span style={{ color: theme.palette.text.primary, fontWeight: 700 }}>{username}</span>
         </Typography>
-
-        <Typography variant="body1" sx={{ mb: 1 }}>
-          <strong>Total Employees:</strong> {profileData.employeeCount}
-        </Typography>
-
-        <Typography variant="body1" sx={{ mb: 1 }}>
-          <strong>Departments:</strong> {profileData.departmentCount}
-        </Typography>
-
-        <Typography variant="body1" sx={{ mb: 1 }}>
-          <strong>Average Age:</strong> {profileData.averageAge}
-        </Typography>
-
-        <Typography variant="body1" sx={{ mb: 1 }}>
-          <strong>Job Satisfaction:</strong> {profileData.averageJobSatisfaction}
-        </Typography>
-
-        <div style={{ height: 20, borderBottom: '1px solid #ccc' }}></div>
-
-        <Typography variant="body1" sx={{ mt: 2 }}>
-          <strong>Thank you for using our platform today! 🚀</strong>
-        </Typography>
-
-        <Button variant="contained" color="secondary" sx={{ mt: 3 }} onClick={handleLogout}>
-          Logout
-        </Button>
       </Box>
-    </Box>
+
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={6}>
+          <Card sx={{ height: '100%', background: alpha(theme.palette.background.paper, 0.6) }}>
+            <CardContent sx={{ p: 5 }}>
+              <Stack spacing={4}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Box sx={{ p: 1.5, bgcolor: alpha(theme.palette.primary.main, 0.1), borderRadius: 3 }}>
+                    <PersonOutlineIcon sx={{ color: 'primary.main' }} />
+                  </Box>
+                  <Box>
+                    <Typography sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5 }}>IDENTIFIER</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>{username}</Typography>
+                  </Box>
+                </Box>
+                <Divider sx={{ opacity: 0.1 }} />
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Box sx={{ p: 1.5, bgcolor: alpha(theme.palette.secondary.main, 0.1), borderRadius: 3 }}>
+                    <TrendingUpIcon sx={{ color: 'secondary.main' }} />
+                  </Box>
+                  <Box>
+                    <Typography sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5 }}>ACCESS LEVEL</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>System Administrator</Typography>
+                  </Box>
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Card sx={{ height: '100%', background: alpha(theme.palette.background.paper, 0.6) }}>
+            <CardContent sx={{ p: 5 }}>
+              <Stack spacing={4}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Box sx={{ p: 1.5, bgcolor: alpha(theme.palette.primary.main, 0.1), borderRadius: 3 }}>
+                    <GroupsIcon sx={{ color: 'primary.main' }} />
+                  </Box>
+                  <Box>
+                    <Typography sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5 }}>ORC CAPACITY</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>{employeeCount} Active Records</Typography>
+                  </Box>
+                </Box>
+                <Divider sx={{ opacity: 0.1 }} />
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Box sx={{ p: 1.5, bgcolor: alpha(theme.palette.secondary.main, 0.1), borderRadius: 3 }}>
+                    <BusinessIcon sx={{ color: 'secondary.main' }} />
+                  </Box>
+                  <Box>
+                    <Typography sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5 }}>STRUCTURAL NODES</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>{departmentCount} Functional Units</Typography>
+                  </Box>
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Box className="glass" sx={{ 
+            p: 5, borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            border: `1px solid ${theme.palette.divider}`,
+            background: alpha(theme.palette.background.paper, 0.4)
+          }}>
+            <Box>
+              <Typography sx={{ color: 'text.primary', fontWeight: 800, mb: 0.5 }}>System Node Security</Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>System uptime: 99.9% • Last sync: {new Date().toLocaleTimeString()}</Typography>
+            </Box>
+            <Button 
+              variant="outlined" 
+              color="error" 
+              onClick={handleLogout}
+              startIcon={<LogoutIcon />}
+              sx={{ 
+                borderRadius: 4, px: 3, py: 1.2, fontWeight: 700,
+                border: `1px solid ${alpha(theme.palette.error.main, 0.3)}`,
+                '&:hover': { border: `1px solid ${theme.palette.error.main}`, bgcolor: alpha(theme.palette.error.main, 0.05) }
+              }}
+            >
+              Terminate Session
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 

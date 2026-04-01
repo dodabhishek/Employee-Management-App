@@ -16,7 +16,6 @@ import java.util.List;
 /** This class represents the REST API controller for departments. */
 @RestController
 @RequestMapping("/api/departments")
-@CrossOrigin(origins = "http://localhost:3000")
 @Tag(name = "Department APIs", description = "API Operations related to managing departments")
 public class DepartmentController {
 

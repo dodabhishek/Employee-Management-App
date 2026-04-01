@@ -1,0 +1,70 @@
+services:
+  # MySQL Database Service
+  - type: web
+    name: ems-mysql
+    env: docker
+    dockerContext: .
+    dockerfilePath: ./nginx/Dockerfile.mysql # I'll need to create this or use a standard image
+    # For now, let's use standard images directly in Render if possible properties
+    plan: free
+    region: ohio
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        value: 780719
+      - key: MYSQL_DATABASE
+        value: employee_management
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 1
+
+  # MongoDB Service
+  - type: web
+    name: ems-mongodb
+    env: docker
+    plan: free
+    region: ohio
+    disk:
+      name: mongo-data
+      mountPath: /data/db
+      sizeGB: 1
+
+  # Backend (Spring Boot)
+  - type: web
+    name: ems-backend
+    env: docker
+    dockerContext: ./backend
+    dockerfilePath: Dockerfile
+    plan: free
+    region: ohio
+    envVars:
+      - key: MYSQL_HOST
+        value: ems-mysql
+      - key: MYSQL_PORT
+        value: 3306
+      - key: MYSQL_USER
+        value: root
+      - key: MYSQL_PASSWORD
+        value: 780719
+      - key: MYSQL_DB
+        value: employee_management
+      - key: MONGO_URI
+        value: mongodb://ems-mongodb:27017/employee_management
+      - key: MYSQL_SSL_MODE
+        value: disabled
+    healthCheckPath: /actuator/health
+
+  # Frontend (Vercel is better for React, but adding here as an alternative)
+  - type: web
+    name: ems-frontend
+    env: docker
+    dockerContext: ./frontend
+    dockerfilePath: Dockerfile
+    plan: free
+    region: ohio
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          name: ems-backend
+          type: web
+          property: host

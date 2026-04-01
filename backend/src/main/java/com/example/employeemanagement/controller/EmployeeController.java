@@ -16,7 +16,6 @@ import java.util.List;
 /** This class represents the REST API controller for employees. */
 @RestController
 @RequestMapping("/api/employees")
-@CrossOrigin(origins = "http://localhost:3000")
 @Tag(name = "Employees APIs", description = "API Operations related to managing employees")
 public class EmployeeController {
 

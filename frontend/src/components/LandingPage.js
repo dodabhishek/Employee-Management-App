@@ -1,138 +1,143 @@
-import React from 'react';
-import { Box, Typography, Button, Container, Grid, Card, CardContent, Stack, Chip } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Button, Container, Grid, Card, CardContent, Stack, Chip, useTheme, alpha } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const statCards = [
-  { value: '84.50%', label: 'Data uptime in the last 12 months' },
-  { value: '1.5 min', label: 'Average export turnaround' },
-  { value: '2.7x', label: 'Faster approvals for managers' },
-];
-
-const quickFeatures = ['Faster onboarding', 'Role-based access', 'Export-ready data', 'Insightful dashboards'];
-
-const benchmarks = [
-  { value: '300', label: 'Active employee records maintained' },
-  { value: '24', label: 'Departments organized' },
-  { value: '4.2 hrs', label: 'Average onboarding cycle' },
-  { value: '18 mo', label: 'Rolling audit history' },
-  { value: '50+', label: 'Weekly exports delivered' },
-  { value: '99.3%', label: 'Roster accuracy' },
+  { value: '84.50%', label: 'Systems Uptime' },
+  { value: '1.5 min', label: 'Processing Speed' },
+  { value: '2.7x', label: 'Manager Efficiency' },
 ];
 
 const modules = [
   {
-    title: 'Employee 360',
-    desc: 'Full profiles, quick edits, exports, and smart filters for any slice of your org.',
+    title: 'Operative Matrix',
+    desc: 'Full intelligence profiles, quick edits, and smart filters for any slice of your organisation.',
     link: '/employees',
+    icon: '👤'
   },
   {
-    title: 'Department clarity',
-    desc: 'Keep teams organized with clean structures and quick pivots between units.',
+    title: 'Unit Navigation',
+    desc: 'Keep teams organised with clean structures and quick pivots between organizational units.',
     link: '/departments',
+    icon: '🏢'
   },
   {
-    title: 'Insightful dashboards',
-    desc: 'Trend lines, cohorts, and composition charts to see what is moving the needle.',
+    title: 'System Intelligence',
+    desc: 'Trend lines, cohorts, and composition charts to see what is moving the needle in real-time.',
     link: '/dashboard',
-  },
-];
-
-const faqs = [
-  {
-    q: 'Can I export data for finance or ops reviews?',
-    a: 'Yes. Use the built-in exports in employees and departments to get clean CSVs any time.',
-  },
-  {
-    q: 'Does it support remote and hybrid tracking?',
-    a: 'Dashboard charts visualize remote, onsite, and hybrid trends without additional setup.',
-  },
-  {
-    q: 'How fast can we onboard?',
-    a: 'Most teams are ready in a day: set roles, add departments, and import employees.',
+    icon: '📊'
   },
 ];
 
 const LandingPage = () => {
+  const [scrollY, setScrollY] = useState(0);
+  const theme = useTheme();
+
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY || 0);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const isDark = theme.palette.mode === 'dark';
+
   return (
-    <Box sx={{ background: 'linear-gradient(180deg, #f8faff 0%, #ffffff 70%)', py: { xs: 4, md: 7 } }}>
-      <Container maxWidth="lg">
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Chip label="EMPLOYEE MANAGEMENT" sx={{ mb: 2, fontWeight: 700, letterSpacing: '0.08em' }} />
-          <Typography variant="h2" sx={{ fontSize: { xs: '2rem', md: '3rem' }, fontWeight: 800, mb: 2, color: '#182042' }}>
-            Run your workforce with clarity and confidence.
+    <Box sx={{ position: 'relative', overflow: 'hidden', pt: { xs: 12, md: 24 }, pb: 20 }}>
+      {/* Background Orbs */}
+      <Box sx={{
+        position: 'absolute', top: '10%', left: '-5%', width: '40vw', height: '40vw',
+        background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.15)} 0%, transparent 70%)`,
+        filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0
+      }} />
+      <Box sx={{
+        position: 'absolute', bottom: '10%', right: '-5%', width: '35vw', height: '35vw',
+        background: `radial-gradient(circle, ${alpha(theme.palette.secondary.main, 0.1)} 0%, transparent 70%)`,
+        filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0
+      }} />
+
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+        {/* Hero Section */}
+        <Box sx={{ textAlign: 'center', mb: { xs: 10, md: 16 } }}>
+          <Chip 
+            label="THE NEW STANDARD" 
+            sx={{ 
+              mb: 4, fontWeight: 700, letterSpacing: '0.2em',
+              bgcolor: alpha(theme.palette.primary.main, 0.1),
+              color: 'primary.main',
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+              px: 2, py: 2
+            }} 
+          />
+          <Typography variant="h1" sx={{ 
+            fontSize: { xs: '2.8rem', md: '5.5rem' }, 
+            lineHeight: 1.05, mb: 3, fontWeight: 900,
+            color: 'text.primary',
+            letterSpacing: '-0.04em'
+          }}>
+            Manage your workforce <br />
+            <span className="gradient-text">with absolute clarity.</span>
           </Typography>
-          <Typography sx={{ maxWidth: 760, mx: 'auto', color: '#5a6180', fontSize: '1.05rem', mb: 3 }}>
-            One place for dashboards, departments, and people operations - built for teams that need insights, not spreadsheets.
+          <Typography sx={{ maxWidth: 650, mx: 'auto', color: 'text.secondary', fontSize: { xs: '1.1rem', md: '1.25rem' }, mb: 6, lineHeight: 1.6, fontWeight: 500 }}>
+            The all-in-one platform for modern people operations. Built for speed, 
+            designed for insights, and ready for global intelligence scale.
           </Typography>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
-            <Button component={Link} to="/dashboard" variant="contained" sx={{ px: 3, py: 1.2, fontWeight: 700 }}>
-              View Dashboard
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center">
+            <Button component={Link} to="/dashboard" variant="contained" className="gradient-bg" sx={{ px: 5, py: 2, fontSize: '1.1rem', borderRadius: 4 }}>
+              Launch Intelligence
             </Button>
-            <Button component={Link} to="/employees" variant="outlined" sx={{ px: 3, py: 1.2, fontWeight: 700 }}>
-              Browse Directory
+            <Button component={Link} to="/employees" variant="outlined" sx={{ px: 5, py: 2, fontSize: '1.1rem', borderRadius: 4, borderColor: theme.palette.divider }}>
+              Explore Roster
             </Button>
           </Stack>
         </Box>
 
-        <Grid container spacing={2.5} sx={{ mb: 6 }}>
-          {statCards.map(card => (
-            <Grid item xs={12} md={4} key={card.value}>
-              <Card sx={{ borderRadius: 3, boxShadow: '0 8px 24px rgba(23,31,73,0.08)' }}>
-                <CardContent>
-                  <Typography variant="h4" sx={{ fontWeight: 800, color: '#1e2b6f', mb: 0.5 }}>
-                    {card.value}
-                  </Typography>
-                  <Typography sx={{ color: '#5e6685' }}>{card.label}</Typography>
-                </CardContent>
-              </Card>
+        {/* Stats Grid */}
+        <Grid container spacing={4} sx={{ mb: 16 }}>
+          {statCards.map((card, idx) => (
+            <Grid item xs={12} md={4} key={idx}>
+              <Box className="glass" sx={{ 
+                p: 5, borderRadius: 8, textAlign: 'center', 
+                border: `1px solid ${theme.palette.divider}`,
+                background: alpha(theme.palette.background.paper, 0.4)
+              }}>
+                <Typography variant="h2" sx={{ fontWeight: 800, color: 'text.primary', mb: 1 }}>{card.value}</Typography>
+                <Typography sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.8rem' }}>
+                  {card.label}
+                </Typography>
+              </Box>
             </Grid>
           ))}
         </Grid>
 
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ justifyContent: 'center', mb: 6 }}>
-          {quickFeatures.map(feature => (
-            <Chip key={feature} label={feature} variant="outlined" sx={{ borderRadius: 1.5, fontWeight: 600 }} />
-          ))}
-        </Stack>
-
-        <Box sx={{ mb: 7 }}>
-          <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 800, color: '#182042', mb: 1 }}>
-            Operational benchmarks at a glance
+        {/* Features / Modules */}
+        <Box sx={{ mb: 16 }}>
+          <Typography variant="h3" sx={{ textAlign: 'center', mb: 8, fontWeight: 900, letterSpacing: '-0.02em', color: 'text.primary' }}>
+            Unified Intelligence Matrix
           </Typography>
-          <Typography sx={{ textAlign: 'center', color: '#5a6180', mb: 3 }}>
-            A single source of truth translates into measurable outcomes.
-          </Typography>
-          <Grid container spacing={2.5}>
-            {benchmarks.map(item => (
-              <Grid item xs={12} sm={6} md={4} key={item.label}>
-                <Card sx={{ borderRadius: 3, height: '100%' }}>
-                  <CardContent>
-                    <Typography variant="h4" sx={{ fontWeight: 800, color: '#1e2b6f', mb: 0.5 }}>
-                      {item.value}
-                    </Typography>
-                    <Typography sx={{ color: '#5e6685' }}>{item.label}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-
-        <Box sx={{ mb: 7 }}>
-          <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 800, color: '#182042', mb: 3 }}>
-            Everything you need to operate smoothly
-          </Typography>
-          <Grid container spacing={2.5}>
-            {modules.map(module => (
-              <Grid item xs={12} md={4} key={module.title}>
-                <Card sx={{ borderRadius: 3, height: '100%', boxShadow: '0 10px 24px rgba(23,31,73,0.08)' }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: '#1f2a6f', mb: 1 }}>
-                      {module.title}
-                    </Typography>
-                    <Typography sx={{ color: '#5d6584', mb: 2 }}>{module.desc}</Typography>
-                    <Button component={Link} to={module.link} variant="text" sx={{ fontWeight: 700 }}>
-                      Open
+          <Grid container spacing={4}>
+            {modules.map((module, idx) => (
+              <Grid item xs={12} md={4} key={idx}>
+                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', background: alpha(theme.palette.background.paper, 0.6) }}>
+                  <CardContent sx={{ p: 5, flexGrow: 1 }}>
+                    <Box sx={{ 
+                      fontSize: '2.5rem', mb: 4, width: 64, height: 64, 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      bgcolor: alpha(theme.palette.primary.main, 0.1), borderRadius: 4,
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`
+                    }}>
+                      {module.icon}
+                    </Box>
+                    <Typography variant="h5" sx={{ fontWeight: 800, mb: 2, color: 'text.primary' }}>{module.title}</Typography>
+                    <Typography sx={{ color: 'text.secondary', mb: 4, lineHeight: 1.8, fontSize: '1rem' }}>{module.desc}</Typography>
+                    <Button 
+                      component={Link} 
+                      to={module.link} 
+                      sx={{ 
+                        color: 'primary.main', p: 0, fontWeight: 700, fontSize: '1rem',
+                        '&:hover': { background: 'transparent', color: 'primary.dark' }
+                      }}
+                    >
+                      Access Module →
                     </Button>
                   </CardContent>
                 </Card>
@@ -141,45 +146,29 @@ const LandingPage = () => {
           </Grid>
         </Box>
 
-        <Box sx={{ mb: 7 }}>
-          <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 800, color: '#182042', mb: 3 }}>
-            FAQs
-          </Typography>
-          <Grid container spacing={2}>
-            {faqs.map(faq => (
-              <Grid item xs={12} md={4} key={faq.q}>
-                <Card sx={{ borderRadius: 3, height: '100%' }}>
-                  <CardContent>
-                    <Typography sx={{ fontWeight: 700, color: '#1c275f', mb: 1 }}>{faq.q}</Typography>
-                    <Typography sx={{ color: '#5d6584' }}>{faq.a}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-
-        <Box
-          sx={{
-            p: { xs: 3, md: 5 },
-            borderRadius: 4,
-            textAlign: 'center',
-            background: 'linear-gradient(135deg, #2b3d99 0%, #1d2b70 100%)',
-            color: 'white',
+        {/* Call to Action */}
+        <Box 
+          className="animate-float"
+          sx={{ 
+            p: { xs: 8, md: 12 }, borderRadius: 10, textAlign: 'center', 
+            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${alpha(theme.palette.secondary.main, 0.05)} 100%)`,
+            border: `1px solid ${theme.palette.divider}`,
+            backdropFilter: 'blur(32px)',
+            boxShadow: isDark ? '0 32px 64px rgba(0,0,0,0.5)' : '0 32px 64px rgba(0,0,0,0.1)'
           }}
         >
-          <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
-            Ready to see it live?
+          <Typography variant="h2" sx={{ fontWeight: 900, mb: 3, letterSpacing: '-0.03em', color: 'text.primary' }}>
+            Ready to transform your org?
           </Typography>
-          <Typography sx={{ opacity: 0.9, mb: 3 }}>
-            Jump into the dashboard, filter employees, and ship updates without extra tooling.
+          <Typography sx={{ color: 'text.secondary', mb: 6, maxWidth: 550, mx: 'auto', fontSize: '1.15rem', lineHeight: 1.6 }}>
+            Join 500+ intelligence-driven companies using EMS PRO to manage their most important asset: their people.
           </Typography>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
-            <Button component={Link} to="/login" variant="contained" color="warning" sx={{ fontWeight: 700 }}>
-              Sign In
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center">
+            <Button component={Link} to="/register" variant="contained" className="gradient-bg" sx={{ px: 6, py: 2.2, fontSize: '1.1rem', borderRadius: 4, fontWeight: 800 }}>
+              Initialize Identity
             </Button>
-            <Button component={Link} to="/register" variant="outlined" sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>
-              Create Account
+            <Button component={Link} to="/login" variant="text" sx={{ color: 'text.primary', px: 5, fontWeight: 700 }}>
+              Sign in to Network
             </Button>
           </Stack>
         </Box>

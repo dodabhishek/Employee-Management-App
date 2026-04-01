@@ -5,10 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
+import java.time.LocalDate;
 
 /**
- * This class represents an Employee entity. Each employee has an ID, first name, last name, email,
- * department, and age.
+ * This class represents an Employee entity. Each employee has an ID, name, email,
+ * department, age, gender, hire date, work mode, and satisfaction score.
  */
 @Data
 @NoArgsConstructor
@@ -39,4 +40,16 @@ public class Employee {
 
   /** The age of the employee. */
   private int age;
+
+  /** The gender identification of the employee. */
+  private String gender;
+
+  /** The date the employee was officially deployed/hired. */
+  private LocalDate hireDate;
+
+  /** The current work mode configuration (Onsite, Remote, Hybrid). */
+  private String workMode;
+
+  /** The operational satisfaction score as reported by the system (1-5). */
+  private int satisfactionScore;
 }

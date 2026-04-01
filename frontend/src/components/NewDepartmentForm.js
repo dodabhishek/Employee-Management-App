@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { TextField, Button, CircularProgress, Box } from '@mui/material';
+import { useNavigate, Link } from 'react-router-dom';
+import { TextField, Button, CircularProgress, Box, Card, CardContent, Typography, Container, Stack, Breadcrumbs } from '@mui/material';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 const NewDepartmentForm = () => {
   const [department, setDepartment] = useState({ name: '' });
@@ -8,22 +9,19 @@ const NewDepartmentForm = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Handle input change for department name
   const handleChange = e => {
     setDepartment({ ...department, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission to create a new department
   const handleSubmit = async e => {
     e.preventDefault();
-    setIsLoading(true); // Start loading spinner
-    setError(null); // Reset any previous error
+    setIsLoading(true);
+    setError(null);
 
     const newDepartment = {
-      // generate random id from 0-9999
       id: Math.floor(Math.random() * 10000),
       name: department.name,
-      employees: [], // Empty array for employees
+      employees: [],
     };
 
     try {
@@ -33,32 +31,81 @@ const NewDepartmentForm = () => {
           Accept: '*/*',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newDepartment), // Send the new department data as JSON
+        body: JSON.stringify(newDepartment),
       });
 
       if (!response.ok) {
         throw new Error('Failed to create department');
       }
-
-      // Navigate to the departments list after successful creation
       navigate('/departments');
     } catch (error) {
       console.error('Error:', error);
-      setError('Failed to create department. Please try again.');
+      setError('Communication anomaly: structural node initialization failed.');
     } finally {
-      setIsLoading(false); // Stop loading spinner
+      setIsLoading(false);
     }
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ '& .MuiTextField-root': { marginBottom: '1rem', width: '100%' }, maxWidth: '400px', margin: '0 auto' }}>
-      <h2>Create New Department</h2>
-      <TextField label="Department Name" name="name" value={department.name} onChange={handleChange} required fullWidth />
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Button type="submit" variant="contained" color="primary" sx={{ marginTop: '1rem' }} disabled={isLoading}>
-        {isLoading ? <CircularProgress size={24} /> : 'Save'}
-      </Button>
-    </Box>
+    <Container maxWidth="sm" sx={{ mt: 14, mb: 10 }}>
+      <Box sx={{ mb: 4 }}>
+        <Breadcrumbs 
+          separator={<NavigateNextIcon fontSize="small" />} 
+          sx={{ color: 'text.secondary', mb: 2 }}
+        >
+          <Link to="/departments" style={{ color: 'inherit', textDecoration: 'none' }}>Nodal Units</Link>
+          <Typography color="white" sx={{ fontWeight: 600 }}>Legacy Creation</Typography>
+        </Breadcrumbs>
+        
+        <Typography variant="h3" className="gradient-text" sx={{ fontWeight: 800, mb: 1 }}>
+          External Initialization
+        </Typography>
+        <Typography sx={{ color: 'text.secondary' }}>
+          Initialize a new operational unit via the legacy bridge endpoint.
+        </Typography>
+      </Box>
+
+      <Card>
+        <CardContent sx={{ p: { xs: 3, md: 5 } }}>
+          <Box component="form" onSubmit={handleSubmit}>
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="caption" sx={{ color: 'secondary.light', fontWeight: 700, mb: 1, display: 'block', ml: 1 }}>
+                UNIT DESIGNATION
+              </Typography>
+              <TextField 
+                placeholder="Department Name" 
+                name="name" 
+                value={department.name} 
+                onChange={handleChange} 
+                required 
+                fullWidth 
+              />
+            </Box>
+
+            {error && (
+              <Typography variant="body2" sx={{ color: '#ef4444', mb: 3, bgcolor: 'rgba(239, 68, 68, 0.1)', py: 1, px: 2, borderRadius: 2 }}>
+                {error}
+              </Typography>
+            )}
+
+            <Stack direction="row" spacing={2}>
+              <Button 
+                type="submit" 
+                variant="contained" 
+                className="gradient-bg" 
+                sx={{ px: 4, py: 1.5, fontWeight: 700 }}
+                disabled={isLoading}
+              >
+                {isLoading ? <CircularProgress size={24} /> : 'Initialize Unit'}
+              </Button>
+              <Button component={Link} to="/departments" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                Cancel
+              </Button>
+            </Stack>
+          </Box>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 

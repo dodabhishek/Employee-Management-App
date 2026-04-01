@@ -1,33 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, Drawer, List, ListItemButton, ListItemText, Chip } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, Drawer, List, ListItemButton, ListItemText, Container, useTheme, Tooltip, Stack } from '@mui/material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-const Navbar = () => {
+const Navbar = ({ mode, toggleTheme }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const navigate = useNavigate();
+  const theme = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const isMobile = useMediaQuery('(max-width:1000px)');
-
+  const isMobile = useMediaQuery('(max-width:1024px)');
   const isActive = path => currentPath === path;
 
-  const handleDrawerToggle = () => {
-    setDrawerOpen(!drawerOpen);
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const checkLoginStatus = () => {
       const token = localStorage.getItem('token');
       setIsLoggedIn(!!token);
     };
-
     checkLoginStatus();
     const interval = setInterval(checkLoginStatus, 2000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -38,18 +43,22 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'Dashboard', path: '/dashboard' },
-    { label: 'Employees', path: '/employees' },
-    { label: 'Departments', path: '/departments' },
-    { label: 'Profile', path: '/profile' },
+    { label: 'Intelligence', path: '/dashboard' },
+    { label: 'Operatives', path: '/employees' },
+    { label: 'Units', path: '/departments' },
+    { label: 'Identity', path: '/profile' },
   ];
 
   const drawerContent = (
-    <Box sx={{ width: 280, background: 'linear-gradient(180deg, #243385 0%, #1a245f 100%)', height: '100%', color: 'white', p: 2 }} role="presentation">
-      <Typography variant="subtitle2" sx={{ opacity: 0.9, letterSpacing: '0.08em', mb: 1.5 }}>
-        EMPLOYEE MANAGEMENT
-      </Typography>
+    <Box sx={{ width: 280, height: '100%', backgroundColor: mode === 'dark' ? '#020617' : '#F8FAFC', p: 3 }} role="presentation">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h6" className="gradient-text" sx={{ fontWeight: 800 }}>
+          Management
+        </Typography>
+        <IconButton onClick={toggleTheme} color="primary">
+          {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+        </IconButton>
+      </Box>
       <List sx={{ p: 0 }}>
         {navItems.map(item => (
           <ListItemButton
@@ -57,64 +66,70 @@ const Navbar = () => {
             component={Link}
             to={item.path}
             selected={isActive(item.path)}
-            onClick={handleDrawerToggle}
+            onClick={() => setDrawerOpen(false)}
             sx={{
-              borderRadius: 2,
-              mb: 0.5,
-              '&.Mui-selected': { backgroundColor: 'rgba(255,255,255,0.16)' },
+              borderRadius: 3,
+              mb: 1,
+              color: isActive(item.path) ? 'primary.main' : 'text.secondary',
+              '&.Mui-selected': { backgroundColor: 'primary.light', color: 'white', opacity: 0.1 },
             }}
           >
-            <ListItemText primary={item.label} />
+            <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 600 }} />
           </ListItemButton>
         ))}
         {isLoggedIn ? (
-          <ListItemButton onClick={handleLogout} sx={{ borderRadius: 2, mt: 0.5 }}>
-            <ListItemText primary="Logout" sx={{ color: '#ffb4b4' }} />
+          <ListItemButton onClick={handleLogout} sx={{ borderRadius: 3, mt: 2, color: '#ef4444' }}>
+            <ListItemText primary="Logout" primaryTypographyProps={{ fontWeight: 600 }} />
           </ListItemButton>
         ) : (
-          <ListItemButton component={Link} to="/login" onClick={handleDrawerToggle} sx={{ borderRadius: 2, mt: 0.5 }}>
-            <ListItemText primary="Login" />
-          </ListItemButton>
+          <>
+            <ListItemButton component={Link} to="/login" onClick={() => setDrawerOpen(false)} sx={{ borderRadius: 3, mt: 2 }}>
+              <ListItemText primary="Login" primaryTypographyProps={{ fontWeight: 600 }} />
+            </ListItemButton>
+            <ListItemButton component={Link} to="/register" onClick={() => setDrawerOpen(false)} sx={{ borderRadius: 3, bgcolor: 'primary.main', color: 'white', '&:hover': { bgcolor: 'primary.dark' } }}>
+              <ListItemText primary="Register" primaryTypographyProps={{ fontWeight: 600 }} />
+            </ListItemButton>
+          </>
         )}
-        <ListItemButton component={Link} to="/register" onClick={handleDrawerToggle} sx={{ borderRadius: 2 }}>
-          <ListItemText primary="Register" />
-        </ListItemButton>
       </List>
     </Box>
   );
 
   return (
-    <>
-      <AppBar
-        position="sticky"
-        elevation={0}
-        sx={{
-          background: 'rgba(255,255,255,0.9)',
-          color: '#1b265f',
-          borderBottom: '1px solid #e7ebff',
-          backdropFilter: 'blur(10px)',
-        }}
-      >
-        <Toolbar sx={{ minHeight: 78 }}>
-          <Typography
-            variant="h5"
-            component={Link}
-            to="/"
-            sx={{
-              flexGrow: 1,
-              textDecoration: 'none',
-              color: '#1e2b6f',
-              fontSize: '1.25rem',
-              fontWeight: 800,
-            }}
-          >
-            Employee Management System
-          </Typography>
+    <AppBar
+      position="fixed"
+      elevation={0}
+      sx={{
+        background: scrolled 
+          ? (mode === 'dark' ? 'rgba(2, 6, 23, 0.8)' : 'rgba(255, 255, 255, 0.8)') 
+          : 'transparent',
+        backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        borderBottom: scrolled 
+          ? (mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.05)') 
+          : 'none',
+        transition: 'all 0.3s ease',
+        top: 0,
+        zIndex: 1100,
+      }}
+    >
+      <Container maxWidth="xl">
+        <Toolbar sx={{ height: scrolled ? 70 : 100, transition: 'height 0.3s ease' }}>
+          <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 1.5, flexGrow: 1 }}>
+            <Box sx={{ width: 32, height: 32, borderRadius: '8px', background: 'linear-gradient(135deg, #A855F7 0%, #06b6d4 100%)' }} />
+            <Typography variant="h6" sx={{ fontWeight: 800, color: mode === 'dark' ? 'white' : '#0F172A', letterSpacing: '-0.02em', fontSize: '1.4rem' }}>
+              EMS<span style={{ color: mode === 'dark' ? '#94a3b8' : '#64748B', fontWeight: 500 }}>PRO</span>
+            </Typography>
+          </Box>
 
           {isMobile ? (
-            <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ color: '#1e2b6f' }}>
-              <MenuIcon />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <IconButton onClick={toggleTheme} sx={{ color: mode === 'dark' ? 'white' : '#0F172A', border: `1px solid ${mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, borderRadius: 2 }}>
+                {mode === 'dark' ? <LightModeIcon size="small" /> : <DarkModeIcon size="small" />}
+              </IconButton>
+              <IconButton onClick={() => setDrawerOpen(true)} sx={{ color: mode === 'dark' ? 'white' : '#0F172A', border: `1px solid ${mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, borderRadius: 2 }}>
+                <MenuIcon />
+              </IconButton>
+            </Box>
           ) : (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {navItems.map(item => (
@@ -123,71 +138,70 @@ const Navbar = () => {
                   component={Link}
                   to={item.path}
                   sx={{
-                    borderRadius: '999px',
-                    px: 1.6,
-                    color: isActive(item.path) ? '#1f2c75' : '#4d577b',
-                    fontWeight: isActive(item.path) ? 700 : 600,
-                    backgroundColor: isActive(item.path) ? '#eef2ff' : 'transparent',
-                    '&:hover': { backgroundColor: '#eef2ff' },
+                    px: 2,
+                    color: isActive(item.path) 
+                      ? (mode === 'dark' ? 'white' : '#0F172A') 
+                      : (mode === 'dark' ? '#94a3b8' : '#64748B'),
+                    '&:hover': { color: mode === 'dark' ? 'white' : '#0F172A', backgroundColor: mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)' },
+                    position: 'relative',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: 8,
+                      left: '20%',
+                      width: isActive(item.path) ? '60%' : '0%',
+                      height: '2px',
+                      background: 'linear-gradient(90deg, #A855F7, #06b6d4)',
+                      transition: 'width 0.3s ease',
+                      borderRadius: '2px',
+                    },
                   }}
                 >
                   {item.label}
                 </Button>
               ))}
-              {isLoggedIn ? (
-                <Button
-                  onClick={handleLogout}
-                  sx={{
-                    borderRadius: '999px',
-                    px: 2,
-                    color: '#8e1b1b',
-                    fontWeight: 700,
-                    backgroundColor: '#ffe5e5',
-                    '&:hover': { backgroundColor: '#ffd6d6' },
+              
+              <Box sx={{ width: '1px', height: 24, bgcolor: mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0,0,0,0.1)', mx: 1.5 }} />
+              
+              <Tooltip title={`Switch to ${mode === 'light' ? 'Dark' : 'Light'} Mode`}>
+                <IconButton 
+                  onClick={toggleTheme} 
+                  sx={{ 
+                    color: mode === 'dark' ? 'primary.light' : 'primary.main', 
+                    border: `1px solid ${mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, 
+                    borderRadius: 2, 
+                    mr: 1.5,
+                    transition: 'all 0.3s ease',
+                    '&:hover': { bgcolor: mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }
                   }}
                 >
+                  {mode === 'dark' ? <LightModeIcon sx={{ fontSize: 20 }} /> : <DarkModeIcon sx={{ fontSize: 20 }} />}
+                </IconButton>
+              </Tooltip>
+
+              {isLoggedIn ? (
+                <Button variant="outlined" onClick={handleLogout} sx={{ borderRadius: 3, textTransform: 'none', borderColor: 'rgba(239, 68, 68, 0.3)', color: '#ef4444', '&:hover': { borderColor: '#ef4444', bgcolor: 'rgba(239, 68, 68, 0.05)' } }}>
                   Logout
                 </Button>
               ) : (
-                <Button
-                  component={Link}
-                  to="/login"
-                  sx={{
-                    borderRadius: '999px',
-                    px: 2,
-                    color: '#1f2c75',
-                    fontWeight: 700,
-                    border: '1px solid #d7defc',
-                  }}
-                >
-                  Login
-                </Button>
+                <Stack direction="row" spacing={1}>
+                  <Button component={Link} to="/login" sx={{ color: mode === 'dark' ? 'white' : '#0F172A', px: 3 }}>
+                    Login
+                  </Button>
+                  <Button component={Link} to="/register" variant="contained" className="gradient-bg" sx={{ borderRadius: 3, fontWeight: 700, px: 3 }}>
+                    Register
+                  </Button>
+                </Stack>
               )}
-              <Button
-                component={Link}
-                to="/register"
-                sx={{
-                  borderRadius: '999px',
-                  px: 2.1,
-                  py: 0.8,
-                  fontWeight: 700,
-                  color: 'white',
-                  background: 'linear-gradient(135deg, #2b3d99 0%, #1d2b70 100%)',
-                  '&:hover': { background: 'linear-gradient(135deg, #243385 0%, #182255 100%)' },
-                }}
-              >
-                Register
-              </Button>
-              <Chip label="Live" size="small" sx={{ bgcolor: '#e5fff1', color: '#0a7a3e', fontWeight: 700 }} />
             </Box>
           )}
         </Toolbar>
-      </AppBar>
+      </Container>
 
-      <Drawer anchor="left" open={drawerOpen} onClose={handleDrawerToggle}>
+      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)} PaperProps={{ sx: { border: 'none' } }}>
         {drawerContent}
       </Drawer>
-    </>
+    </AppBar>
   );
 };
 

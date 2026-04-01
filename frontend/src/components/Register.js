@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { TextField, Button, Card, CardContent, Typography, Box, CircularProgress, IconButton, InputAdornment } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { TextField, Button, Card, CardContent, Typography, Box, CircularProgress, IconButton, InputAdornment, Container, Stack } from '@mui/material';
+import { Visibility, VisibilityOff, PersonAddOutlined } from '@mui/icons-material';
+import { useNavigate, Link } from 'react-router-dom';
+
+import config from '../config';
+
+const AUTH_BASE_URL = config.AUTH_BASE_URL;
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -18,14 +22,14 @@ const Register = () => {
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError('Password synchronization failure. Please match the sequence.');
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch('https://employee-management-app-gdm5.onrender.com/register', {
+      const response = await fetch(`${AUTH_BASE_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -34,110 +38,129 @@ const Register = () => {
       setLoading(false);
 
       if (response.ok) {
-        alert('User registered successfully. Please login to continue.');
-        navigate('/login'); // Redirect to login page after successful registration
+        alert('Registration successful. You may now authenticate.');
+        navigate('/login');
       } else {
         const data = await response.json();
-        setError(data.message || 'Error registering user. Please try again.');
+        setError(data.message || 'Registration anomaly detected. Please retry.');
       }
     } catch (err) {
       setLoading(false);
-      setError('Something went wrong. Please try again later.');
+      setError('Global authentication server is unreachable.');
     }
   };
 
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleToggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <Card sx={{ width: '100%', maxWidth: 400, boxShadow: 3, borderRadius: 4, padding: 2, backgroundColor: '#fff' }}>
-        <CardContent>
-          <Typography variant="h5" component="h2" textAlign="center" sx={{ marginBottom: '1rem' }}>
-            Register
+    <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '90vh', pt: 8 }}>
+      <Card sx={{ width: '100%', p: { xs: 2, md: 4 }, position: 'relative', overflow: 'visible' }}>
+        {/* Geometric Accent */}
+        <Box sx={{
+          position: 'absolute', top: -20, left: '50%', transform: 'translateX(-50%)',
+          width: 60, height: 60, borderRadius: 3, bgcolor: '#06b6d4',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 0 30px rgba(6, 182, 212, 0.5)', zIndex: 2
+        }}>
+          <PersonAddOutlined sx={{ color: 'white' }} />
+        </Box>
+
+        <CardContent sx={{ pt: 5 }}>
+          <Typography variant="h4" className="gradient-text" sx={{ fontWeight: 800, textAlign: 'center', mb: 1 }}>
+            Identity Creation
           </Typography>
+          <Typography sx={{ color: 'text.secondary', textAlign: 'center', mb: 4 }}>
+            Register your credentials to join the EMS PRO network.
+          </Typography>
+
           <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Username"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              sx={{ marginBottom: '1rem' }}
-              InputProps={{
-                style: {
-                  fontFamily: 'Poppins, sans-serif',
-                },
-              }}
-            />
-            <TextField
-              fullWidth
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              sx={{ marginBottom: '1rem' }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton aria-label="toggle password visibility" onClick={handleTogglePasswordVisibility} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                style: {
-                  fontFamily: 'Poppins, sans-serif',
-                },
-              }}
-            />
-            <TextField
-              fullWidth
-              label="Confirm Password"
-              type={showConfirmPassword ? 'text' : 'password'}
-              value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
-              sx={{ marginBottom: '1rem' }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton aria-label="toggle confirm password visibility" onClick={handleToggleConfirmPasswordVisibility} edge="end">
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                style: {
-                  fontFamily: 'Poppins, sans-serif',
-                },
-              }}
-            />
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="caption" sx={{ color: 'secondary.light', fontWeight: 700, mb: 1, display: 'block', ml: 1 }}>
+                OPERATIVE HANDS
+              </Typography>
+              <TextField
+                fullWidth
+                placeholder="Secure username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                autoComplete="off"
+              />
+            </Box>
+
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="caption" sx={{ color: 'secondary.light', fontWeight: 700, mb: 1, display: 'block', ml: 1 }}>
+                ENCRYPTION KEY
+              </Typography>
+              <TextField
+                fullWidth
+                placeholder="Create password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" sx={{ color: 'text.secondary' }}>
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="caption" sx={{ color: 'secondary.light', fontWeight: 700, mb: 1, display: 'block', ml: 1 }}>
+                RE-VERIFICATION
+              </Typography>
+              <TextField
+                fullWidth
+                placeholder="Confirm password"
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end" sx={{ color: 'text.secondary' }}>
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+
             {loading ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <CircularProgress />
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+                <CircularProgress thickness={5} color="secondary" />
               </Box>
             ) : (
-              <Button fullWidth variant="contained" color="primary" type="submit">
-                Register
+              <Button fullWidth variant="contained" className="gradient-bg" type="submit" sx={{ py: 1.8, fontSize: '1rem' }}>
+                Join Network
               </Button>
             )}
+
             {error && (
-              <Typography color="error" textAlign="center" sx={{ marginTop: '1rem' }}>
+              <Typography variant="body2" sx={{ color: '#ef4444', textAlign: 'center', mt: 3, bgcolor: 'rgba(239, 68, 68, 0.1)', py: 1, borderRadius: 2 }}>
                 {error}
               </Typography>
             )}
-            <Typography textAlign="center" sx={{ marginTop: '1rem' }}>
-              Already have an account?{' '}
-              <Button color="primary" component="a" href="/login">
-                Login
-              </Button>
-            </Typography>
+
+            <Box sx={{ mt: 5, textAlign: 'center' }}>
+              <Stack direction="row" spacing={2} justifyContent="center" sx={{ borderTop: '1px solid rgba(255,255,255,0.05)', pt: 3 }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Already registered?
+                </Typography>
+                <Link to="/login" style={{ textDecoration: 'none' }}>
+                  <Typography variant="body2" sx={{ color: 'secondary.light', fontWeight: 600, '&:hover': { color: 'white' } }}>
+                    Login Instead
+                  </Typography>
+                </Link>
+              </Stack>
+            </Box>
           </form>
         </CardContent>
       </Card>
-    </Box>
+    </Container>
   );
 };
 

@@ -1,8 +1,7 @@
 import axios from 'axios';
+import config from '../config';
 
-const API_URL = process.env.REACT_APP_API_URL
-  ? `${process.env.REACT_APP_API_URL}/employees`
-  : 'http://localhost:8080/api/employees';
+const API_URL = `${config.API_BASE_URL}/employees`;
 
 // Get all employees
 export const getAllEmployees = async () => {
