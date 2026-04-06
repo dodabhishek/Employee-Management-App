@@ -124,6 +124,9 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>com.example.employeemanagement.EmployeeManagementApplication</mainClass>
+        </configuration>
       </plugin>
 
       <!-- Plugin: Maven Compiler Plugin -->
