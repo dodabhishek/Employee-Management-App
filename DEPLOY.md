@@ -48,8 +48,14 @@ Vercel will host your React application with a global edge network.
 2.  Test the **Login** and **Registration** flows.
 3.  Verify that **Employee** and **Department** data is persisting correctly by refreshing the page.
 
+> [!WARNING]
+> **Database Persistence**: Render's **Free Tier** does not support persistent disks. This means any data added while using the `render.yaml` blueprint images will be lost whenever the service restarts or spins down.
+
 > [!TIP]
-> **Database Persistence**: Since we are using Render Disks in the blueprint, your data will persist even if the free tier services spin down due to inactivity.
+> **For True Persistence (Free)**:
+> 1.  Create a free cluster on **[MongoDB Atlas](https://www.mongodb.com/cloud/atlas)**.
+> 2.  Create a free MySQL instance on **[Aiven](https://aiven.io/mysql)**.
+> 3.  Copy their connection URIs and update the `MONGO_URI` and `SPRING_DATASOURCE_URL` in your Render `ems-backend` environment variables.
 
 > [!IMPORTANT]
 > **CORS**: If you encounter a CORS error, ensure that `ems-backend` is correctly reading the `REACT_APP_API_URL` of your Vercel deployment. Our `CorsConfig.java` is currently configured to be permissive for the demo.

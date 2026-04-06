@@ -13,10 +13,8 @@ services:
         value: 780719
       - key: MYSQL_DATABASE
         value: employee_management
-    disk:
-      name: mysql-data
-      mountPath: /var/lib/mysql
-      sizeGB: 1
+    # DISK REMOVED: Free tier does not support persistent disks.
+    # Data will be ephemeral. For persistence, use a managed database.
 
   # MongoDB Service
   - type: web
@@ -24,10 +22,8 @@ services:
     env: docker
     plan: free
     region: ohio
-    disk:
-      name: mongo-data
-      mountPath: /data/db
-      sizeGB: 1
+    # DISK REMOVED: Free tier does not support persistent disks.
+    # Data will be ephemeral. For persistence, use a managed database.
 
   # Backend (Spring Boot)
   - type: web

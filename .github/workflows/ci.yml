@@ -3,10 +3,10 @@ name: CI/CD Pipeline for Employee Management
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   formatting:
